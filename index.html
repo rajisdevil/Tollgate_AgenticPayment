@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TollGate | Autonomous Payment Rails for Machines (HTTP 402) — Team CtrlC_CtrlV</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans, Fraunces (for cozy editorial warmth), JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Fraunces"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cozy: {
+              bg: '#FAF7F2',
+              card: '#F2ECE1',
+              mint: '#E6F0EC',
+              teal: '#0F5A52',
+              tealDark: '#0A3F3A',
+              amber: '#D98218',
+              amberLight: '#FEF3C7',
+              ink: '#1C2826',
+              muted: '#596A66',
+              border: '#DFD8CC'
+            },
+            night: {
+              bg: '#111716',
+              card: '#192220',
+              surface: '#202C29',
+              teal: '#2DD4BF',
+              amber: '#F59E0B',
+              border: '#2A3835'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom cozy scrollbars & subtle textures */
+    body {
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+    .cozy-shadow {
+      box-shadow: 0 10px 30px -10px rgba(15, 90, 82, 0.08), 0 4px 12px -2px rgba(28, 40, 38, 0.04);
+    }
+    .dark .cozy-shadow {
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .step-active {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px -6px rgba(15, 90, 82, 0.2);
+    }
+    .pulse-dot {
+      animation: pulseRing 2s infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+  </style>
+</head>
+
+<body class="bg-cozy-bg text-cozy-ink dark:bg-night-bg dark:text-stone-100 antialiased selection:bg-cozy-teal selection:text-white">
+
+  <!-- TOP JUDGE EVALUATION BAR -->
+  <div class="bg-cozy-teal text-white dark:bg-night-surface dark:border-b dark:border-night-border text-xs py-2 px-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="bg-cozy-amber text-white font-semibold px-2 py-0.5 rounded-full text-[11px] tracking-wide uppercase">Ideathon Evaluation Mode</span>
+        <span class="text-emerald-100 hidden sm:inline">Theme: <strong>Agentic Payment Rails</strong> • Team: <strong>CtrlC_CtrlV</strong> (Academy of Technology)</span>
+      </div>
+      <div class="flex items-center gap-4 overflow-x-auto">
+        <a href="#problem" class="hover:text-amber-300 transition underline-offset-4 hover:underline">1. Problem</a>
+        <a href="#simulator" class="hover:text-amber-300 transition underline-offset-4 hover:underline font-semibold text-amber-200">2. Live x402 Demo</a>
+        <a href="#architecture" class="hover:text-amber-300 transition underline-offset-4 hover:underline">3. Architecture</a>
+        <a href="#security" class="hover:text-amber-300 transition underline-offset-4 hover:underline">4. Security</a>
+        <a href="#feasibility" class="hover:text-amber-300 transition underline-offset-4 hover:underline">5. Feasibility</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-cozy-bg/85 dark:bg-night-bg/85 border-b border-cozy-border dark:border-night-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-cozy-teal dark:bg-teal-500 flex items-center justify-center text-white dark:text-stone-950 font-mono font-bold text-lg shadow-sm group-hover:scale-105 transition">
+          402
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-serif font-bold text-xl tracking-tight text-cozy-teal dark:text-teal-300">TollGate</span>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-cozy-mint dark:bg-night-surface text-cozy-teal dark:text-teal-300 border border-cozy-teal/20">x402 Standard</span>
+          </div>
+          <p class="text-[11px] text-cozy-muted dark:text-stone-400 hidden sm:block">Autonomous payment rails for machines</p>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-cozy-muted dark:text-stone-300">
+        <a href="#problem" class="hover:text-cozy-teal dark:hover:text-teal-300 transition">Problem</a>
+        <a href="#solution" class="hover:text-cozy-teal dark:hover:text-teal-300 transition">How It Works</a>
+        <a href="#simulator" class="hover:text-cozy-teal dark:hover:text-teal-300 transition">Interactive Playground</a>
+        <a href="#architecture" class="hover:text-cozy-teal dark:hover:text-teal-300 transition">Architecture & Stack</a>
+        <a href="#security" class="hover:text-cozy-teal dark:hover:text-teal-300 transition">Security</a>
+        <a href="#team" class="hover:text-cozy-teal dark:hover:text-teal-300 transition">Team</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <!-- Cozy Theme Toggle -->
+        <button id="themeToggle" class="p-2.5 rounded-xl bg-cozy-card dark:bg-night-card border border-cozy-border dark:border-night-border text-cozy-ink dark:text-amber-300 hover:scale-105 transition" title="Toggle Cozy Daylight / Cozy Night Mode">
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+        </button>
+
+        <a href="#simulator" class="inline-flex items-center gap-2 bg-cozy-teal hover:bg-cozy-tealDark dark:bg-teal-500 dark:hover:bg-teal-400 text-white dark:text-stone-950 font-semibold text-sm px-4 py-2.5 rounded-xl transition shadow-sm">
+          <i data-lucide="play" class="w-4 h-4"></i>
+          <span>Test 402 Handshake</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Column: Hero Copy -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cozy-mint dark:bg-night-surface border border-cozy-teal/20 text-cozy-teal dark:text-teal-300 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span>
+            <span>IDEATHON • AGENTIC PAYMENT RAILS • HTTP 402</span>
+          </div>
+
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-cozy-ink dark:text-white leading-[1.12]">
+            Machines decide at machine speed. <br />
+            <span class="text-cozy-teal dark:text-teal-400 italic font-normal">Now they can pay at machine speed.</span>
+          </h1>
+
+          <p class="text-lg sm:text-xl text-cozy-muted dark:text-stone-300 leading-relaxed max-w-2xl">
+            <strong>TollGate</strong> builds the autonomous operating layer around <strong>HTTP 402</strong>. Two HTTP requests—no account, no API key, no OTP, and no human in the loop. Equipped with spend policies, batched stablecoin settlement, and an IoT gateway for constrained devices.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <a href="#simulator" class="inline-flex items-center gap-2.5 bg-cozy-teal hover:bg-cozy-tealDark dark:bg-teal-500 dark:hover:bg-teal-400 text-white dark:text-stone-950 font-semibold px-6 py-3.5 rounded-2xl transition cozy-shadow">
+              <i data-lucide="terminal" class="w-5 h-5"></i>
+              <span>Launch Live x402 Simulator</span>
+            </a>
+            <a href="#architecture" class="inline-flex items-center gap-2 bg-cozy-card hover:bg-cozy-border/60 dark:bg-night-card dark:hover:bg-night-surface text-cozy-ink dark:text-stone-200 border border-cozy-border dark:border-night-border font-semibold px-6 py-3.5 rounded-2xl transition">
+              <i data-lucide="layers" class="w-5 h-5 text-cozy-amber"></i>
+              <span>Explore System Architecture</span>
+            </a>
+          </div>
+
+          <!-- Key Metric Pills -->
+          <div class="grid grid-cols-3 gap-4 pt-6 border-t border-cozy-border dark:border-night-border">
+            <div>
+              <div class="font-mono font-bold text-2xl text-cozy-teal dark:text-teal-300">2 Requests</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Zero accounts or API keys</div>
+            </div>
+            <div>
+              <div class="font-mono font-bold text-2xl text-cozy-amber">&lt; $0.001</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Sub-cent batched settlement</div>
+            </div>
+            <div>
+              <div class="font-mono font-bold text-2xl text-cozy-teal dark:text-teal-300">100% Policy</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Caps, nonces & kill-switch</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Cozy Visual Handshake Card -->
+        <div class="lg:col-span-5">
+          <div class="bg-white dark:bg-night-card rounded-3xl p-6 sm:p-8 border border-cozy-border dark:border-night-border cozy-shadow relative">
+            <div class="flex items-center justify-between pb-4 mb-6 border-b border-cozy-border dark:border-night-border">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-400"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                <span class="ml-2 font-mono text-xs text-cozy-muted dark:text-stone-400">x402-protocol-flow.http</span>
+              </div>
+              <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-medium">HTTP-Native</span>
+            </div>
+
+            <!-- 3-Stage Flow Diagram from Slide 2 -->
+            <div class="space-y-4">
+              <!-- Node 1 -->
+              <div class="p-4 rounded-2xl bg-cozy-mint/70 dark:bg-night-surface border border-cozy-teal/20 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="bot" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm">AI Agent or IoT Sensor</h3>
+                    <span class="font-mono text-xs text-cozy-teal dark:text-teal-300">GET /v1/gpu-compute</span>
+                  </div>
+                  <p class="text-xs text-cozy-muted dark:text-stone-400 mt-1">Asks for a paid resource (API call, GPU-second, or live feed) with zero pre-registration.</p>
+                </div>
+              </div>
+
+              <div class="flex justify-center">
+                <div class="w-8 h-8 rounded-full bg-amber-500/15 text-cozy-amber flex items-center justify-center">
+                  <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </div>
+              </div>
+
+              <!-- Node 2 -->
+              <div class="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-500/30 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-cozy-amber text-white flex items-center justify-center shrink-0 mt-0.5 font-mono font-bold text-xs">
+                  402
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm text-amber-900 dark:text-amber-300">402 Payment Required</h3>
+                    <span class="font-mono text-xs text-amber-700 dark:text-amber-400">Quote + Nonce</span>
+                  </div>
+                  <p class="text-xs text-amber-800/80 dark:text-amber-200/70 mt-1">Server replies with exact price, stablecoin token, payee address, and short-lived quote.</p>
+                </div>
+              </div>
+
+              <div class="flex justify-center">
+                <div class="w-8 h-8 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+                  <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                </div>
+              </div>
+
+              <!-- Node 3 -->
+              <div class="p-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-500/30 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 font-mono font-bold text-xs">
+                  200
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm text-emerald-950 dark:text-emerald-300">200 OK — Resource Served</h3>
+                    <span class="font-mono text-xs text-emerald-700 dark:text-emerald-400">Verified Proof</span>
+                  </div>
+                  <p class="text-xs text-emerald-800/80 dark:text-emerald-200/70 mt-1">Wallet checks spend policy, signs proof, facilitator verifies &amp; batches settlement.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Operating Layer Footer Pill -->
+            <div class="mt-6 pt-4 border-t border-cozy-border dark:border-night-border flex items-center justify-between text-xs text-cozy-muted dark:text-stone-400">
+              <span>Operating Layer by <strong>TollGate</strong></span>
+              <span class="font-mono text-cozy-teal dark:text-teal-300">Spend Policies • Batching • IoT Bridge</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: PROBLEM STATEMENT (SLIDE 3) -->
+  <section id="problem" class="py-16 bg-cozy-card/70 dark:bg-night-card/60 border-y border-cozy-border dark:border-night-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="text-xs font-mono uppercase tracking-widest text-cozy-amber font-semibold">01 / Problem Statement</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">
+          Why today’s payment rails break when an AI agent or sensor tries to pay
+        </h2>
+        <p class="text-cozy-muted dark:text-stone-400 mt-3 text-lg">
+          Autonomous agents can reason, query APIs, and orchestrate workflows in milliseconds—yet the moment they hit a paywall, legacy finance brings them to a halt.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mt-10">
+        <!-- Problem 1 -->
+        <div class="bg-white dark:bg-night-card p-7 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-cozy-teal text-white flex items-center justify-center font-bold text-lg mb-5">
+              1
+            </div>
+            <h3 class="font-serif text-xl font-bold mb-2">Human Gates</h3>
+            <p class="text-cozy-muted dark:text-stone-300 text-sm leading-relaxed">
+              Passwords, OTPs, 3DS prompts, and CAPTCHAs assume a person sitting at the keyboard. Autonomous scripts and headless sensors get locked out immediately.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-cozy-border dark:border-night-border flex items-center gap-2 text-xs font-mono text-rose-600 dark:text-rose-400">
+            <i data-lucide="shield-alert" class="w-4 h-4"></i>
+            <span>Blocks headless execution</span>
+          </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div class="bg-white dark:bg-night-card p-7 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-cozy-teal text-white flex items-center justify-center font-bold text-lg mb-5">
+              2
+            </div>
+            <h3 class="font-serif text-xl font-bold mb-2">Fees Beat Price</h3>
+            <p class="text-cozy-muted dark:text-stone-300 text-sm leading-relaxed">
+              Fixed per-transaction card fees ($0.30 + 2.9%) completely dwarf a sub-cent API call ($0.002). Micro-transactions are economically impossible on card rails.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-cozy-border dark:border-night-border flex items-center gap-2 text-xs font-mono text-amber-600 dark:text-amber-400">
+            <i data-lucide="coins" class="w-4 h-4"></i>
+            <span>$0.30 fee on a $0.001 call = 30,000% overhead</span>
+          </div>
+        </div>
+
+        <!-- Problem 3 -->
+        <div class="bg-white dark:bg-night-card p-7 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-2xl bg-cozy-teal text-white flex items-center justify-center font-bold text-lg mb-5">
+              3
+            </div>
+            <h3 class="font-serif text-xl font-bold mb-2">Billing Mismatch</h3>
+            <p class="text-cozy-muted dark:text-stone-300 text-sm leading-relaxed">
+              Monthly SaaS subscriptions and static invoices cannot dynamically price a single GPU-second or one on-demand telemetry reading from a remote device.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-cozy-border dark:border-night-border flex items-center gap-2 text-xs font-mono text-cozy-teal dark:text-teal-400">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+            <span>Requires per-call granularity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: PROPOSED SOLUTION (SLIDE 4) -->
+  <section id="solution" class="py-16 lg:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-cozy-teal dark:text-teal-400 font-semibold">02 / Proposed Solution</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">
+            Two HTTP requests. Zero human friction.
+          </h2>
+        </div>
+        <p class="text-sm text-cozy-muted dark:text-stone-400 max-w-md">
+          No account creation, no pre-shared API key, no OTP, and no human in the loop. TollGate wraps the open <strong>x402 standard</strong> with an enterprise operating layer.
+        </p>
+      </div>
+
+      <!-- 4-Step Pipeline -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+        <div class="bg-cozy-mint/60 dark:bg-night-card p-6 rounded-3xl border border-cozy-teal/20 relative">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-full bg-cozy-teal text-white font-bold flex items-center justify-center text-sm">1</span>
+            <span class="font-mono text-xs text-cozy-teal dark:text-teal-300">HTTP GET / POST</span>
+          </div>
+          <h3 class="font-serif font-bold text-lg">Request</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-2">
+            Agent or sensor calls a paid API, GPU compute node, or live data endpoint directly.
+          </p>
+        </div>
+
+        <div class="bg-cozy-mint/60 dark:bg-night-card p-6 rounded-3xl border border-cozy-teal/20 relative">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-full bg-cozy-teal text-white font-bold flex items-center justify-center text-sm">2</span>
+            <span class="font-mono text-xs text-cozy-amber font-semibold">HTTP 402</span>
+          </div>
+          <h3 class="font-serif font-bold text-lg">Quote</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-2">
+            Server replies <code class="font-mono text-xs bg-white/80 dark:bg-night-surface px-1.5 py-0.5 rounded">402 Payment Required</code> with price, token, payee, and nonce.
+          </p>
+        </div>
+
+        <div class="bg-cozy-mint/60 dark:bg-night-card p-6 rounded-3xl border border-cozy-teal/20 relative">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-full bg-cozy-teal text-white font-bold flex items-center justify-center text-sm">3</span>
+            <span class="font-mono text-xs text-cozy-teal dark:text-teal-300">Sign &amp; Retry</span>
+          </div>
+          <h3 class="font-serif font-bold text-lg">Pay and Retry</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-2">
+            Agent wallet checks spend policy, cryptographically signs within mandate, and resends with proof.
+          </p>
+        </div>
+
+        <div class="bg-cozy-mint/60 dark:bg-night-card p-6 rounded-3xl border border-cozy-teal/20 relative">
+          <div class="flex items-center justify-between mb-4">
+            <span class="w-9 h-9 rounded-full bg-cozy-teal text-white font-bold flex items-center justify-center text-sm">4</span>
+            <span class="font-mono text-xs text-emerald-600 dark:text-emerald-400 font-semibold">HTTP 200 OK</span>
+          </div>
+          <h3 class="font-serif font-bold text-lg">Verify</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-2">
+            Facilitator confirms payment proof &amp; locks voucher; server immediately returns <code class="font-mono text-xs bg-white/80 dark:bg-night-surface px-1.5 py-0.5 rounded">200 OK</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Operating Layer Banner -->
+      <div class="mt-8 bg-white dark:bg-night-card rounded-3xl p-6 border border-cozy-border dark:border-night-border cozy-shadow">
+        <div class="text-xs font-mono uppercase tracking-wider text-cozy-muted dark:text-stone-400 mb-4 text-center">
+          TollGate adds the operating layer around the x402 standard
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-2xl bg-cozy-bg dark:bg-night-surface flex items-center gap-3">
+            <i data-lucide="sliders" class="w-5 h-5 text-cozy-teal dark:text-teal-300 shrink-0"></i>
+            <div>
+              <div class="font-bold text-sm">Spend Policies</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Caps, budgets &amp; allowlists</div>
+            </div>
+          </div>
+          <div class="p-4 rounded-2xl bg-cozy-bg dark:bg-night-surface flex items-center gap-3">
+            <i data-lucide="layers" class="w-5 h-5 text-cozy-amber shrink-0"></i>
+            <div>
+              <div class="font-bold text-sm">Batched Settlement</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Many calls, one payment</div>
+            </div>
+          </div>
+          <div class="p-4 rounded-2xl bg-cozy-bg dark:bg-night-surface flex items-center gap-3">
+            <i data-lucide="compass" class="w-5 h-5 text-cozy-teal dark:text-teal-300 shrink-0"></i>
+            <div>
+              <div class="font-bold text-sm">Discovery Registry</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Catalog of paid APIs/feeds</div>
+            </div>
+          </div>
+          <div class="p-4 rounded-2xl bg-cozy-bg dark:bg-night-surface flex items-center gap-3">
+            <i data-lucide="cpu" class="w-5 h-5 text-cozy-amber shrink-0"></i>
+            <div>
+              <div class="font-bold text-sm">IoT Gateway</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">MQTT/HTTP bridge for sensors</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: INTERACTIVE JUDGE PLAYGROUND (LIVE SIMULATOR + CONTROL PLANE) -->
+  <section id="simulator" class="py-16 bg-cozy-mint/40 dark:bg-night-surface/40 border-y border-cozy-border dark:border-night-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-cozy-teal dark:text-teal-300 font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></span>
+            03 / Interactive Judge Playground
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">
+            Test the HTTP 402 Handshake &amp; Control Plane Live
+          </h2>
+        </div>
+        <p class="text-sm text-cozy-muted dark:text-stone-300 max-w-md">
+          Select a machine scenario below, adjust the owner’s spend policy or trigger the <strong>Kill Switch</strong>, and inspect the live x402 headers and audit log.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8">
+        <!-- Left 5 Cols: Control Plane Policy Config & Scenarios -->
+        <div class="lg:col-span-5 space-y-6">
+          <!-- Scenario Picker Card -->
+          <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+            <h3 class="font-bold text-sm uppercase tracking-wider text-cozy-muted dark:text-stone-400 mb-4 flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-cozy-amber"></i>
+              <span>1. Choose Machine Scenario</span>
+            </h3>
+
+            <div class="space-y-2.5" id="scenarioButtons">
+              <button onclick="selectScenario('agent_data')" id="btn-agent_data" class="w-full text-left p-3.5 rounded-2xl border-2 border-cozy-teal bg-cozy-mint/50 dark:bg-night-surface transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-sm">AI Research Agent → Market Feed API</div>
+                  <div class="text-xs text-cozy-muted dark:text-stone-400">Endpoint: <code class="font-mono">GET /v1/market-tick</code> • Cost: <strong>$0.002 USDC</strong></div>
+                </div>
+                <span class="font-mono text-xs px-2.5 py-1 rounded-lg bg-cozy-teal text-white">$0.002</span>
+              </button>
+
+              <button onclick="selectScenario('iot_compute')" id="btn-iot_compute" class="w-full text-left p-3.5 rounded-2xl border border-cozy-border dark:border-night-border hover:bg-cozy-bg dark:hover:bg-night-surface transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-sm">ESP32 Sensor (via IoT Gateway) → GPU Inference</div>
+                  <div class="text-xs text-cozy-muted dark:text-stone-400">Bridge: <code class="font-mono">MQTT → POST /v1/vision-gpu</code> • Cost: <strong>$0.008 USDC</strong></div>
+                </div>
+                <span class="font-mono text-xs px-2.5 py-1 rounded-lg bg-cozy-card dark:bg-night-bg">$0.008</span>
+              </button>
+
+              <button onclick="selectScenario('rogue_agent')" id="btn-rogue_agent" class="w-full text-left p-3.5 rounded-2xl border border-cozy-border dark:border-night-border hover:bg-cozy-bg dark:hover:bg-night-surface transition flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-sm text-rose-700 dark:text-rose-400">Rogue/Hijacked Agent → Bulk GPU Cluster</div>
+                  <div class="text-xs text-cozy-muted dark:text-stone-400">Endpoint: <code class="font-mono">POST /v1/cluster-rent</code> • Cost: <strong>$0.050 USDC</strong></div>
+                </div>
+                <span class="font-mono text-xs px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-300 font-semibold">$0.050</span>
+              </button>
+            </div>
+
+            <!-- Control Plane Spend Policy Sliders -->
+            <div class="mt-6 pt-6 border-t border-cozy-border dark:border-night-border space-y-4">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-sm flex items-center gap-2">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-cozy-teal dark:text-teal-300"></i>
+                  <span>2. Control Plane Spend Policy</span>
+                </h4>
+                <span class="text-xs font-mono text-cozy-muted dark:text-stone-400">Owner Mandate Active</span>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-cozy-muted dark:text-stone-300">Per-Call Spend Cap (USDC)</span>
+                  <span id="capValueDisplay" class="font-mono font-bold text-cozy-teal dark:text-teal-300">$0.015 USDC</span>
+                </div>
+                <input id="spendCapSlider" type="range" min="0.001" max="0.060" step="0.001" value="0.015" class="w-full accent-cozy-teal cursor-pointer" oninput="updateCapDisplay(this.value)" />
+                <div class="flex justify-between text-[10px] font-mono text-cozy-muted mt-0.5">
+                  <span>$0.001</span>
+                  <span>Default: $0.015</span>
+                  <span>$0.060</span>
+                </div>
+              </div>
+
+              <!-- Kill Switch Toggle -->
+              <div class="flex items-center justify-between p-3 rounded-2xl bg-rose-50/70 dark:bg-rose-950/20 border border-rose-500/20">
+                <div>
+                  <div class="font-bold text-xs text-rose-900 dark:text-rose-300">Emergency Agent Kill Switch</div>
+                  <div class="text-[11px] text-rose-700/80 dark:text-rose-300/70">Immediately revokes agent signing authority</div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="killSwitchToggle" class="sr-only peer">
+                  <div class="w-11 h-6 bg-stone-300 dark:bg-stone-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
+                </label>
+              </div>
+
+              <button onclick="runSimulation()" id="executeBtn" class="w-full py-3.5 px-5 rounded-2xl bg-cozy-teal hover:bg-cozy-tealDark dark:bg-teal-500 dark:hover:bg-teal-400 text-white dark:text-stone-950 font-bold text-sm flex items-center justify-center gap-2 transition shadow-md">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>Execute Autonomous x402 Call</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Batch Settlement Counter Card -->
+          <div class="bg-white dark:bg-night-card p-5 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow flex items-center justify-between">
+            <div>
+              <div class="text-xs font-mono uppercase text-cozy-muted dark:text-stone-400">Redis Voucher Queue → Batch Settlement</div>
+              <div class="font-serif font-bold text-lg mt-0.5"><span id="batchCount">3</span> Calls Queued (<span id="batchVolume" class="text-cozy-teal dark:text-teal-300 font-mono">$0.012</span> USDC)</div>
+              <div class="text-xs text-cozy-muted dark:text-stone-400">Settled in 1 L2 stablecoin tx to keep gas &lt; call price</div>
+            </div>
+            <button onclick="settleBatchNow()" class="px-3.5 py-2 rounded-xl bg-cozy-amber/15 hover:bg-cozy-amber/25 text-cozy-amber font-mono text-xs font-semibold transition shrink-0">
+              Settle Batch
+            </button>
+          </div>
+        </div>
+
+        <!-- Right 7 Cols: Live HTTP Inspector & Real-time Audit Log -->
+        <div class="lg:col-span-7 space-y-6">
+          <!-- Step Progress Bar -->
+          <div class="grid grid-cols-4 gap-3" id="simSteps">
+            <div id="step-1" class="p-3 rounded-2xl bg-white dark:bg-night-card border border-cozy-border dark:border-night-border transition">
+              <div class="text-[11px] font-mono text-cozy-muted">STEP 1</div>
+              <div class="font-bold text-xs sm:text-sm mt-0.5">1. Request</div>
+            </div>
+            <div id="step-2" class="p-3 rounded-2xl bg-white dark:bg-night-card border border-cozy-border dark:border-night-border transition">
+              <div class="text-[11px] font-mono text-cozy-amber">STEP 2</div>
+              <div class="font-bold text-xs sm:text-sm mt-0.5">2. 402 Quote</div>
+            </div>
+            <div id="step-3" class="p-3 rounded-2xl bg-white dark:bg-night-card border border-cozy-border dark:border-night-border transition">
+              <div class="text-[11px] font-mono text-cozy-teal dark:text-teal-300">STEP 3</div>
+              <div class="font-bold text-xs sm:text-sm mt-0.5">3. Pay &amp; Retry</div>
+            </div>
+            <div id="step-4" class="p-3 rounded-2xl bg-white dark:bg-night-card border border-cozy-border dark:border-night-border transition">
+              <div class="text-[11px] font-mono text-emerald-600">STEP 4</div>
+              <div class="font-bold text-xs sm:text-sm mt-0.5">4. Verify 200</div>
+            </div>
+          </div>
+
+          <!-- Terminal Output Window -->
+          <div class="bg-[#161F1E] text-stone-100 rounded-3xl p-6 border border-night-border cozy-shadow font-mono text-xs leading-relaxed">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-stone-800">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-stone-400 ml-2">x402-inspector — Postgres + Redis Facilitator</span>
+              </div>
+              <span id="simStatusBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px]">READY</span>
+            </div>
+
+            <pre id="terminalLog" class="overflow-x-auto whitespace-pre-wrap text-stone-200 min-h-[230px] max-h-[290px] overflow-y-auto">// Click "Execute Autonomous x402 Call" to inspect the two-request HTTP 402 handshake...
+
+[1] Request  -> GET /v1/market-tick HTTP/1.1
+[2] Quote    <- HTTP/1.1 402 Payment Required
+                X-402-Price: 0.002 USDC
+                X-402-Payee: 0x71C...89A (Seller Paywall Middleware)
+                X-402-Nonce: n_9f8a7d6c (TTL: 30s, Replay Protected)
+[3] Retry    -> GET /v1/market-tick HTTP/1.1
+                X-402-Proof: sig_0x4b9e... (Signed within $0.015 policy mandate)
+[4] Verify   <- HTTP/1.1 200 OK (Facilitator verified in 14ms via Redis)</pre>
+          </div>
+
+          <!-- Real-Time Control Plane Audit Log Table -->
+          <div class="bg-white dark:bg-night-card rounded-3xl p-5 border border-cozy-border dark:border-night-border cozy-shadow">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-bold text-xs uppercase tracking-wider text-cozy-muted dark:text-stone-400 flex items-center gap-2">
+                <i data-lucide="file-Spreadsheet" class="w-4 h-4 text-cozy-teal dark:text-teal-300"></i>
+                <span>Live Control Plane Audit Log (Postgres Ledger)</span>
+              </h4>
+              <span class="text-[11px] font-mono text-cozy-muted dark:text-stone-400">Compliance &amp; Finance Trail</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs font-mono">
+                <thead>
+                  <tr class="border-b border-cozy-border dark:border-night-border text-cozy-muted dark:text-stone-400">
+                    <th class="py-2 pr-3">Agent / Device</th>
+                    <th class="py-2 pr-3">Endpoint</th>
+                    <th class="py-2 pr-3">Quote</th>
+                    <th class="py-2 pr-3">Nonce</th>
+                    <th class="py-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="auditTableBody" class="divide-y divide-cozy-border/60 dark:divide-night-border">
+                  <tr>
+                    <td class="py-2.5 pr-3">agent-alpha-01</td>
+                    <td class="py-2.5 pr-3">GET /v1/market-tick</td>
+                    <td class="py-2.5 pr-3">$0.002 USDC</td>
+                    <td class="py-2.5 pr-3 text-cozy-muted">n_8821a</td>
+                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">200 SETTLED</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-3">iot-esp32-node4</td>
+                    <td class="py-2.5 pr-3">POST /v1/vision-gpu</td>
+                    <td class="py-2.5 pr-3">$0.008 USDC</td>
+                    <td class="py-2.5 pr-3 text-cozy-muted">n_4190c</td>
+                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">200 BATCHED</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-2.5 pr-3">agent-alpha-01</td>
+                    <td class="py-2.5 pr-3">GET /v1/weather-feed</td>
+                    <td class="py-2.5 pr-3">$0.002 USDC</td>
+                    <td class="py-2.5 pr-3 text-cozy-muted">n_1049f</td>
+                    <td class="py-2.5"><span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">200 BATCHED</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: SYSTEM ARCHITECTURE & TECH STACK (SLIDES 5 & 6) -->
+  <section id="architecture" class="py-16 lg:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="text-xs font-mono uppercase tracking-widest text-cozy-teal dark:text-teal-400 font-semibold">04 / System Architecture &amp; Technology Stack</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">
+          End-to-End Architecture Across Buyer, Seller &amp; Settlement
+        </h2>
+        <p class="text-cozy-muted dark:text-stone-400 mt-2">
+          Built on open standards so developers can add a paywall in a few lines of TypeScript or Python middleware while keeping the settlement facilitator rail-agnostic.
+        </p>
+      </div>
+
+      <!-- 3-Column System Architecture Diagram (From Slide 5) -->
+      <div class="grid md:grid-cols-3 gap-6 mt-10">
+        <!-- BUYER SIDE -->
+        <div class="bg-cozy-mint/60 dark:bg-night-card rounded-3xl p-6 border border-cozy-teal/25">
+          <div class="text-xs font-mono font-bold uppercase tracking-wider text-cozy-teal dark:text-teal-300 mb-4 flex items-center justify-between">
+            <span>Buyer Side</span>
+            <i data-lucide="cpu" class="w-4 h-4"></i>
+          </div>
+          <div class="space-y-4">
+            <div class="bg-white dark:bg-night-surface p-5 rounded-2xl border border-cozy-border dark:border-night-border">
+              <h3 class="font-bold text-base">Agent Wallet SDK</h3>
+              <p class="text-xs text-cozy-muted dark:text-stone-300 mt-1">
+                Intercepts HTTP 402 responses automatically, verifies quotes against owner spend policy, and signs proofs within mandate.
+              </p>
+            </div>
+            <div class="bg-white dark:bg-night-surface p-5 rounded-2xl border border-cozy-border dark:border-night-border">
+              <h3 class="font-bold text-base">IoT Gateway</h3>
+              <p class="text-xs text-cozy-muted dark:text-stone-300 mt-1">
+                Lightweight MQTT and HTTP bridge that pays on behalf of constrained microcontrollers too small to hold cryptographic keys.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SELLER SIDE -->
+        <div class="bg-cozy-mint/60 dark:bg-night-card rounded-3xl p-6 border border-cozy-teal/25">
+          <div class="text-xs font-mono font-bold uppercase tracking-wider text-cozy-teal dark:text-teal-300 mb-4 flex items-center justify-between">
+            <span>Seller Side</span>
+            <i data-lucide="server" class="w-4 h-4"></i>
+          </div>
+          <div class="space-y-4">
+            <div class="bg-white dark:bg-night-surface p-5 rounded-2xl border border-cozy-border dark:border-night-border">
+              <h3 class="font-bold text-base">Paywall Middleware</h3>
+              <p class="text-xs text-cozy-muted dark:text-stone-300 mt-1">
+                Prices endpoints dynamically, issues signed HTTP 402 quotes with short-lived nonces, and unlocks resources on proof verification.
+              </p>
+            </div>
+            <div class="bg-white dark:bg-night-surface p-5 rounded-2xl border border-cozy-border dark:border-night-border">
+              <h3 class="font-bold text-base">Discovery Registry</h3>
+              <p class="text-xs text-cozy-muted dark:text-stone-300 mt-1">
+                Machine-readable directory that lists paid APIs, compute nodes, and sensor feeds with transparent per-call pricing.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTLEMENT -->
+        <div class="bg-cozy-mint/60 dark:bg-night-card rounded-3xl p-6 border border-cozy-teal/25">
+          <div class="text-xs font-mono font-bold uppercase tracking-wider text-cozy-amber mb-4 flex items-center justify-between">
+            <span>Settlement Layer</span>
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+          </div>
+          <div class="space-y-4">
+            <div class="bg-white dark:bg-night-surface p-5 rounded-2xl border border-cozy-border dark:border-night-border">
+              <h3 class="font-bold text-base">Facilitator API</h3>
+              <p class="text-xs text-cozy-muted dark:text-stone-300 mt-1">
+                Verifies cryptographic payment proofs in milliseconds via Redis nonce/voucher checks and credits sellers in Postgres.
+              </p>
+            </div>
+            <div class="bg-white dark:bg-night-surface p-5 rounded-2xl border border-cozy-border dark:border-night-border">
+              <h3 class="font-bold text-base">Batch Settlement</h3>
+              <p class="text-xs text-cozy-muted dark:text-stone-300 mt-1">
+                Aggregates thousands of sub-cent API calls into a single stablecoin transaction on a low-fee network.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unified Bottom Control Plane Bar (Slide 5) -->
+      <div class="mt-6 bg-cozy-teal text-white rounded-2xl p-4 text-center font-medium text-sm shadow-sm">
+        <strong>Control Plane:</strong> Unified Spend Policies, Immutable Audit Log &amp; Real-Time React Dashboard across all layers
+      </div>
+
+      <!-- Developer SDK Preview + Tech Stack Justification Table (Slide 6) -->
+      <div class="grid lg:grid-cols-12 gap-8 mt-12 items-start">
+        <!-- Tech Stack Table (7 cols) -->
+        <div class="lg:col-span-7 bg-white dark:bg-night-card rounded-3xl p-6 border border-cozy-border dark:border-night-border cozy-shadow overflow-x-auto">
+          <h3 class="font-serif font-bold text-xl mb-4">Technology Stack Justification</h3>
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-cozy-border dark:border-night-border text-xs font-mono uppercase text-cozy-muted dark:text-stone-400">
+                <th class="py-3 pr-4">Layer</th>
+                <th class="py-3 pr-4">Choice</th>
+                <th class="py-3">Why It Fits</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-cozy-border/70 dark:divide-night-border text-xs sm:text-sm">
+              <tr>
+                <td class="py-3.5 pr-4 font-bold text-cozy-teal dark:text-teal-300">Payment Protocol</td>
+                <td class="py-3.5 pr-4 font-medium">HTTP 402 with open x402 standard</td>
+                <td class="py-3.5 text-cozy-muted dark:text-stone-300">Open and HTTP-native, so no new protocol to invent and no vendor lock-in.</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 pr-4 font-bold text-cozy-teal dark:text-teal-300">Settlement</td>
+                <td class="py-3.5 pr-4 font-medium">Stablecoin on low-fee network (testnet first)</td>
+                <td class="py-3.5 text-cozy-muted dark:text-stone-300">Stable value and sub-cent fees; the facilitator stays rail-agnostic.</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 pr-4 font-bold text-cozy-teal dark:text-teal-300">Buyer &amp; Seller SDKs</td>
+                <td class="py-3.5 pr-4 font-medium">TypeScript and Python libraries</td>
+                <td class="py-3.5 text-cozy-muted dark:text-stone-300">Where most agents and APIs are built; a paywall is a few lines of middleware.</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 pr-4 font-bold text-cozy-teal dark:text-teal-300">Backend Services</td>
+                <td class="py-3.5 pr-4 font-medium">Facilitator API with Postgres &amp; Redis</td>
+                <td class="py-3.5 text-cozy-muted dark:text-stone-300">Postgres for ledger and audit log; Redis for fast balance, voucher, and nonce checks.</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 pr-4 font-bold text-cozy-teal dark:text-teal-300">Control Plane</td>
+                <td class="py-3.5 pr-4 font-medium">React Dashboard</td>
+                <td class="py-3.5 text-cozy-muted dark:text-stone-300">Spend policies, audit log, and live spend in one unified view.</td>
+              </tr>
+              <tr>
+                <td class="py-3.5 pr-4 font-bold text-cozy-teal dark:text-teal-300">IoT Gateway</td>
+                <td class="py-3.5 pr-4 font-medium">Lightweight MQTT &amp; HTTP Bridge</td>
+                <td class="py-3.5 text-cozy-muted dark:text-stone-300">Devices too small to hold keys can still pay autonomously through the gateway.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SDK Code Integration Preview (5 cols) -->
+        <div class="lg:col-span-5 bg-[#161F1E] text-stone-100 rounded-3xl p-6 border border-night-border cozy-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-mono text-teal-300 font-semibold">Developer Experience (DX)</span>
+            <div class="flex gap-1.5">
+              <button onclick="switchCodeTab('seller')" id="tab-seller" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-teal-500 text-stone-950 font-semibold">Seller (TS)</button>
+              <button onclick="switchCodeTab('buyer')" id="tab-buyer" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-stone-800 text-stone-300 hover:bg-stone-700">Buyer Agent (Py)</button>
+            </div>
+          </div>
+
+          <pre id="code-seller" class="font-mono text-xs text-stone-200 overflow-x-auto leading-relaxed">// Add an x402 paywall in 5 lines of TypeScript
+import express from "express";
+import { tollgatePaywall } from "@tollgate/seller-sdk";
+
+const app = express();
+
+app.get("/v1/gpu-inference",
+  tollgatePaywall({
+    price: "0.008",
+    token: "USDC",
+    payee: "0x71C...89A",
+    facilitatorUrl: "https://facilitator.tollgate.sh"
+  }),
+  (req, res) => {
+    res.json({ status: "200 OK", output: "[Tensor Result]" });
+  }
+);</pre>
+
+          <pre id="code-buyer" class="font-mono text-xs text-stone-200 overflow-x-auto leading-relaxed hidden"># Autonomous Python Agent with Spend Policy Wallet
+from tollgate import AgentWalletClient
+
+wallet = AgentWalletClient(
+    owner_mandate="sig_owner_0x99a...",
+    per_call_cap_usdc=0.015,
+    daily_budget_usdc=5.00,
+    allowlist=["api.marketfeed.io", "gpu.compute.sh"]
+)
+
+# Automatically handles 402 -> Quote -> Sign -> 200 OK
+response = wallet.get("https://gpu.compute.sh/v1/gpu-inference")
+print(response.json())</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: SECURITY AND FRAUD MITIGATION PLAN (SLIDE 7) -->
+  <section id="security" class="py-16 bg-cozy-card/70 dark:bg-night-card/60 border-y border-cozy-border dark:border-night-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="text-xs font-mono uppercase tracking-widest text-cozy-amber font-semibold">05 / Security &amp; Fraud Mitigation Plan</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">
+          Defense-in-Depth for Autonomous Machine Wallets
+        </h2>
+        <p class="text-cozy-muted dark:text-stone-400 mt-2">
+          Giving machines spending power requires strict cryptographic boundaries, replay protection, and instant revocation controls.
+        </p>
+      </div>
+
+      <!-- 6 Security Pillars Grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white font-bold flex items-center justify-center mb-4">1</div>
+          <h3 class="font-serif font-bold text-lg">Spend Policies</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            Strict per-call caps, daily budgets, and explicit payee allowlists enforced before any signature is generated.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white font-bold flex items-center justify-center mb-4">2</div>
+          <h3 class="font-serif font-bold text-lg">Owner-Backed Mandate</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            A cryptographically signed mandate ties every autonomous agent or sensor back to an accountable human or enterprise owner.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white font-bold flex items-center justify-center mb-4">3</div>
+          <h3 class="font-serif font-bold text-lg">Replay Protection</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            Unique nonces and short-lived quotes verified in Redis block double-spends and packet replay attacks.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white font-bold flex items-center justify-center mb-4">4</div>
+          <h3 class="font-serif font-bold text-lg">Price Lock</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            A seller-signed 402 quote is cryptographically bound and cannot change or bait-and-switch after payment is signed.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white font-bold flex items-center justify-center mb-4">5</div>
+          <h3 class="font-serif font-bold text-lg">Refund Hooks</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            If a downstream API call fails or times out after payment verification, failed calls are automatically credited back to the balance.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-night-card p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-10 h-10 rounded-xl bg-cozy-teal text-white font-bold flex items-center justify-center mb-4">6</div>
+          <h3 class="font-serif font-bold text-lg">Audit Trail</h3>
+          <p class="text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            Every single payment quote, proof, and settlement batch is immutably logged in Postgres for finance and compliance teams.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom Callouts from Slide 7 -->
+      <div class="grid md:grid-cols-2 gap-6 mt-6">
+        <div class="p-5 rounded-2xl bg-cozy-mint dark:bg-night-surface border border-cozy-teal/20 flex items-center gap-4">
+          <i data-lucide="shield-off" class="w-7 h-7 text-cozy-teal dark:text-teal-300 shrink-0"></i>
+          <div class="text-sm">
+            <strong>Rogue or hijacked agent protection:</strong> Hard spend caps, isolated per-agent keys, and an instant 1-click <strong>Kill Switch</strong>.
+          </div>
+        </div>
+        <div class="p-5 rounded-2xl bg-cozy-mint dark:bg-night-surface border border-cozy-teal/20 flex items-center gap-4">
+          <i data-lucide="scale" class="w-7 h-7 text-cozy-amber shrink-0"></i>
+          <div class="text-sm">
+            <strong>Compliance and KYC:</strong> Handled cleanly via regulated partners at the fiat on/off-ramp edges plus strict payee allowlists.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: IMPLEMENTATION FEASIBILITY & ROADMAP (SLIDE 8) -->
+  <section id="feasibility" class="py-16 lg:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="text-xs font-mono uppercase tracking-widest text-cozy-teal dark:text-teal-400 font-semibold">06 / Implementation Feasibility Analysis</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">
+          Pragmatic 3-Phase Rollout &amp; Feasibility Pillars
+        </h2>
+      </div>
+
+      <!-- 3 Phases -->
+      <div class="grid md:grid-cols-3 gap-6 mt-10">
+        <!-- Phase 1 -->
+        <div class="bg-white dark:bg-night-card rounded-3xl p-7 border-t-4 border-t-cozy-teal border border-cozy-border dark:border-night-border cozy-shadow">
+          <span class="text-xs font-mono font-bold uppercase text-cozy-teal dark:text-teal-300">Phase 1 | Prove</span>
+          <h3 class="font-serif text-2xl font-bold mt-1 mb-4">Testnet MVP</h3>
+          <ul class="space-y-3 text-sm text-cozy-muted dark:text-stone-300">
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-cozy-teal dark:text-teal-400 shrink-0 mt-1"></i>
+              <span>Paywall middleware for a sample API</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-cozy-teal dark:text-teal-400 shrink-0 mt-1"></i>
+              <span>Agent client with a spend-policy wallet</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-cozy-teal dark:text-teal-400 shrink-0 mt-1"></i>
+              <span>Live demo: agent buys data, sensor buys compute</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="bg-white dark:bg-night-card rounded-3xl p-7 border-t-4 border-t-cozy-amber border border-cozy-border dark:border-night-border cozy-shadow">
+          <span class="text-xs font-mono font-bold uppercase text-cozy-amber">Phase 2 | Harden</span>
+          <h3 class="font-serif text-2xl font-bold mt-1 mb-4">Sessions &amp; Devices</h3>
+          <ul class="space-y-3 text-sm text-cozy-muted dark:text-stone-300">
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-cozy-amber shrink-0 mt-1"></i>
+              <span>Batched session settlement</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-cozy-amber shrink-0 mt-1"></i>
+              <span>IoT gateway for constrained devices</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-cozy-amber shrink-0 mt-1"></i>
+              <span>Policy dashboard and full audit log</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="bg-white dark:bg-night-card rounded-3xl p-7 border-t-4 border-t-emerald-600 border border-cozy-border dark:border-night-border cozy-shadow">
+          <span class="text-xs font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400">Phase 3 | Pilot</span>
+          <h3 class="font-serif text-2xl font-bold mt-1 mb-4">Real-World Traffic</h3>
+          <ul class="space-y-3 text-sm text-cozy-muted dark:text-stone-300">
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+              <span>Partner with a data marketplace or GPU provider</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+              <span>Fiat on/off-ramp via a regulated partner</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <i data-lucide="check" class="w-4 h-4 text-emerald-600 shrink-0 mt-1"></i>
+              <span>Comprehensive security review before mainnet</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3 Feasibility Pillars -->
+      <div class="grid md:grid-cols-3 gap-6 mt-8">
+        <div class="p-6 rounded-2xl bg-cozy-mint/70 dark:bg-night-surface border border-cozy-teal/20">
+          <div class="font-bold text-base text-cozy-teal dark:text-teal-300">Technical Feasibility</div>
+          <p class="text-xs sm:text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            The handshake is the open <strong>x402 standard</strong>; we build the pragmatic operating layers around it.
+          </p>
+        </div>
+        <div class="p-6 rounded-2xl bg-cozy-mint/70 dark:bg-night-surface border border-cozy-teal/20">
+          <div class="font-bold text-base text-cozy-amber">Economic Feasibility</div>
+          <p class="text-xs sm:text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            <strong>Batched settlement</strong> keeps network transaction fees strictly below the price of an individual sub-cent call.
+          </p>
+        </div>
+        <div class="p-6 rounded-2xl bg-cozy-mint/70 dark:bg-night-surface border border-cozy-teal/20">
+          <div class="font-bold text-base text-cozy-teal dark:text-teal-300">Regulatory Feasibility</div>
+          <p class="text-xs sm:text-sm text-cozy-muted dark:text-stone-300 mt-1">
+            <strong>Regulated partners</strong> handle KYC and fiat on/off-ramps at the edges while enforcing payee allowlists.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: TEAM CTRLC_CTRLV (SLIDES 1 & 9) -->
+  <section id="team" class="py-16 bg-cozy-card/80 dark:bg-night-card border-t border-cozy-border dark:border-night-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-cozy-teal dark:text-teal-400 font-semibold">07 / Built By Team CtrlC_CtrlV</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-1">Meet the Builders Behind TollGate</h2>
+          <p class="text-sm text-cozy-muted dark:text-stone-400 mt-1">Academy of Technology • Ideathon Theme: Agentic Payment Rails</p>
+        </div>
+        <a href="mailto:sayan.kumarshyamal.25@aot.edu.in" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cozy-teal text-white text-xs font-mono hover:bg-cozy-tealDark transition">
+          <i data-lucide="mail" class="w-4 h-4"></i>
+          <span>sayan.kumarshyamal.25@aot.edu.in</span>
+        </a>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+        <!-- Member 1 -->
+        <div class="bg-white dark:bg-night-surface p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-12 h-12 rounded-2xl bg-cozy-teal text-white font-serif font-bold text-lg flex items-center justify-center mb-4">
+            SS
+          </div>
+          <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-amber-500/15 text-cozy-amber font-semibold">Team Leader</span>
+          <h3 class="font-serif font-bold text-lg mt-2">Sayan Kr. Shyamal</h3>
+          <p class="text-xs text-cozy-muted dark:text-stone-400 mt-1">Academy of Technology</p>
+        </div>
+
+        <!-- Member 2 -->
+        <div class="bg-white dark:bg-night-surface p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-12 h-12 rounded-2xl bg-cozy-mint dark:bg-night-card text-cozy-teal dark:text-teal-300 font-serif font-bold text-lg flex items-center justify-center mb-4">
+            RM
+          </div>
+          <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-cozy-mint dark:bg-night-card text-cozy-teal dark:text-teal-300">Team Member 1</span>
+          <h3 class="font-serif font-bold text-lg mt-2">Rajesh Mondal</h3>
+          <p class="text-xs text-cozy-muted dark:text-stone-400 mt-1">Academy of Technology</p>
+        </div>
+
+        <!-- Member 3 -->
+        <div class="bg-white dark:bg-night-surface p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-12 h-12 rounded-2xl bg-cozy-mint dark:bg-night-card text-cozy-teal dark:text-teal-300 font-serif font-bold text-lg flex items-center justify-center mb-4">
+            SG
+          </div>
+          <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-cozy-mint dark:bg-night-card text-cozy-teal dark:text-teal-300">Team Member 2</span>
+          <h3 class="font-serif font-bold text-lg mt-2">Suhrit Ghosh</h3>
+          <p class="text-xs text-cozy-muted dark:text-stone-400 mt-1">Academy of Technology</p>
+        </div>
+
+        <!-- Member 4 -->
+        <div class="bg-white dark:bg-night-surface p-6 rounded-3xl border border-cozy-border dark:border-night-border cozy-shadow">
+          <div class="w-12 h-12 rounded-2xl bg-cozy-mint dark:bg-night-card text-cozy-teal dark:text-teal-300 font-serif font-bold text-lg flex items-center justify-center mb-4">
+            KD
+          </div>
+          <span class="text-[11px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-cozy-mint dark:bg-night-card text-cozy-teal dark:text-teal-300">Team Member 3</span>
+          <h3 class="font-serif font-bold text-lg mt-2">Kanchan Dey</h3>
+          <p class="text-xs text-cozy-muted dark:text-stone-400 mt-1">Academy of Technology</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 border-t border-cozy-border dark:border-night-border text-xs text-cozy-muted dark:text-stone-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-serif font-bold text-cozy-teal dark:text-teal-300">TollGate</span>
+        <span>• Autonomous Payment Rails for Machines (HTTP 402)</span>
+      </div>
+      <div>
+        Team <strong>CtrlC_CtrlV</strong> • Academy of Technology
+      </div>
+    </div>
+  </footer>
+
+  <!-- INTERACTIVE SCRIPTS -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Theme toggle logic
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // Simulator State
+    let currentScenario = 'agent_data';
+    let batchCount = 3;
+    let batchVolume = 0.012;
+
+    const scenarios = {
+      agent_data: {
+        actor: 'agent-alpha-01',
+        method: 'GET',
+        endpoint: '/v1/market-tick',
+        price: 0.002,
+        payee: '0x71C...89A (MarketFeed Paywall)',
+        resourceSample: '{ "symbol": "ETH-USD", "price": 3142.50, "latency_ms": 11 }'
+      },
+      iot_compute: {
+        actor: 'iot-esp32-node4 (via MQTT Bridge)',
+        method: 'POST',
+        endpoint: '/v1/vision-gpu',
+        price: 0.008,
+        payee: '0x99B...42F (GPU Compute Node)',
+        resourceSample: '{ "gpu_sec": 1, "inference": "anomaly_clear", "confidence": 0.994 }'
+      },
+      rogue_agent: {
+        actor: 'agent-rogue-99',
+        method: 'POST',
+        endpoint: '/v1/cluster-rent',
+        price: 0.050,
+        payee: '0x66E...11D (Unverified Bulk GPU)',
+        resourceSample: '{ "cluster": "allocated" }'
+      }
+    };
+
+    function selectScenario(key) {
+      currentScenario = key;
+      ['agent_data', 'iot_compute', 'rogue_agent'].forEach(k => {
+        const btn = document.getElementById('btn-' + k);
+        if (k === key) {
+          btn.className = "w-full text-left p-3.5 rounded-2xl border-2 border-cozy-teal bg-cozy-mint/50 dark:bg-night-surface transition flex items-center justify-between";
+        } else {
+          btn.className = "w-full text-left p-3.5 rounded-2xl border border-cozy-border dark:border-night-border hover:bg-cozy-bg dark:hover:bg-night-surface transition flex items-center justify-between";
+        }
+      });
+    }
+
+    function updateCapDisplay(val) {
+      document.getElementById('capValueDisplay').textContent = '$' + parseFloat(val).toFixed(3) + ' USDC';
+    }
+
+    function highlightStep(stepNum, statusColor = 'teal') {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById('step-' + i);
+        el.classList.remove('step-active', 'border-cozy-teal', 'border-rose-500', 'bg-cozy-mint/60');
+      }
+      if (stepNum > 0) {
+        const activeEl = document.getElementById('step-' + stepNum);
+        activeEl.classList.add('step-active');
+        if (statusColor === 'rose') {
+          activeEl.classList.add('border-rose-500');
+        } else {
+          activeEl.classList.add('border-cozy-teal', 'bg-cozy-mint/60');
+        }
+      }
+    }
+
+    function runSimulation() {
+      const s = scenarios[currentScenario];
+      const cap = parseFloat(document.getElementById('spendCapSlider').value);
+      const killSwitch = document.getElementById('killSwitchToggle').checked;
+      const term = document.getElementById('terminalLog');
+      const badge = document.getElementById('simStatusBadge');
+      const nonce = 'n_' + Math.random().toString(16).substring(2, 7);
+
+      // Step 1: Request
+      highlightStep(1);
+      badge.textContent = '1. REQUESTING...';
+      badge.className = 'px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[11px]';
+      term.textContent = `[1] Request -> ${s.method} ${s.endpoint} HTTP/1.1\n    User-Agent: ${s.actor}\n    Host: api.tollgate.network\n\nWaiting for server quote...`;
+
+      setTimeout(() => {
+        // Step 2: 402 Quote
+        highlightStep(2);
+        badge.textContent = '2. 402 QUOTE RECEIVED';
+        term.textContent += `\n\n[2] Quote   <- HTTP/1.1 402 Payment Required\n    X-402-Standard: x402/1.0\n    X-402-Price: ${s.price.toFixed(3)} USDC\n    X-402-Payee: ${s.payee}\n    X-402-Nonce: ${nonce} (TTL: 30s, Price-Locked)`;
+
+        setTimeout(() => {
+          // Step 3: Policy Check & Sign
+          highlightStep(3);
+          if (killSwitch) {
+            highlightStep(3, 'rose');
+            badge.textContent = 'BLOCKED: KILL SWITCH';
+            badge.className = 'px-2.5 py-0.5 rounded-full bg-rose-500/30 text-rose-300 text-[11px]';
+            term.textContent += `\n\n[3] Policy  !! EMERGENCY KILL SWITCH ACTIVE\n    Agent wallet signing key revoked by owner mandate.\n    Transaction aborted before signing. Zero funds spent.`;
+            appendAuditRow(s.actor, `${s.method} ${s.endpoint}`, `$${s.price.toFixed(3)} USDC`, nonce, 'KILL-SWITCH BLOCKED', false);
+            return;
+          }
+
+          if (s.price > cap) {
+            highlightStep(3, 'rose');
+            badge.textContent = 'BLOCKED: SPEND CAP';
+            badge.className = 'px-2.5 py-0.5 rounded-full bg-rose-500/30 text-rose-300 text-[11px]';
+            term.textContent += `\n\n[3] Policy  !! SPEND POLICY VIOLATION\n    Quote ($${s.price.toFixed(3)} USDC) exceeds Per-Call Spend Cap ($${cap.toFixed(3)} USDC).\n    Wallet refused signature. Rogue spend prevented!`;
+            appendAuditRow(s.actor, `${s.method} ${s.endpoint}`, `$${s.price.toFixed(3)} USDC`, nonce, 'POLICY DENIED', false);
+            return;
+          }
+
+          term.textContent += `\n\n[3] Retry   -> ${s.method} ${s.endpoint} HTTP/1.1\n    X-402-Nonce: ${nonce}\n    X-402-Proof: sig_0x${Math.random().toString(16).substring(2, 10)} (Policy OK <= $${cap.toFixed(3)})`;
+
+          setTimeout(() => {
+            // Step 4: Verify & 200 OK
+            highlightStep(4);
+            badge.textContent = '4. 200 OK SERVED';
+            badge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px]';
+            term.textContent += `\n\n[4] Verify  <- HTTP/1.1 200 OK\n    X-Facilitator-Check: Verified via Redis in 12ms (Queued for Batch Settlement)\n    Payload: ${s.resourceSample}`;
+
+            batchCount += 1;
+            batchVolume += s.price;
+            document.getElementById('batchCount').textContent = batchCount;
+            document.getElementById('batchVolume').textContent = '$' + batchVolume.toFixed(3);
+            appendAuditRow(s.actor, `${s.method} ${s.endpoint}`, `$${s.price.toFixed(3)} USDC`, nonce, '200 BATCHED', true);
+          }, 450);
+        }, 450);
+      }, 350);
+    }
+
+    function appendAuditRow(actor, endpoint, quote, nonce, statusText, success) {
+      const tbody = document.getElementById('auditTableBody');
+      const tr = document.createElement('tr');
+      const badgeClass = success
+        ? 'px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+        : 'px-2 py-0.5 rounded bg-rose-500/15 text-rose-700 dark:text-rose-300 font-bold';
+      tr.innerHTML = `
+        <td class="py-2.5 pr-3">${actor}</td>
+        <td class="py-2.5 pr-3">${endpoint}</td>
+        <td class="py-2.5 pr-3">${quote}</td>
+        <td class="py-2.5 pr-3 text-cozy-muted">${nonce}</td>
+        <td class="py-2.5"><span class="${badgeClass}">${statusText}</span></td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+    }
+
+    function settleBatchNow() {
+      if (batchCount === 0) return;
+      const settledCalls = batchCount;
+      const settledVol = batchVolume.toFixed(3);
+      batchCount = 0;
+      batchVolume = 0;
+      document.getElementById('batchCount').textContent = '0';
+      document.getElementById('batchVolume').textContent = '$0.000';
+
+      const term = document.getElementById('terminalLog');
+      term.textContent += `\n\n[BATCH SETTLEMENT] Settled ${settledCalls} micro-calls ($${settledVol} USDC total) in 1 stablecoin tx! Network fee: $0.0004.`;
+    }
+
+    function switchCodeTab(tab) {
+      const sellerPre = document.getElementById('code-seller');
+      const buyerPre = document.getElementById('code-buyer');
+      const tabSeller = document.getElementById('tab-seller');
+      const tabBuyer = document.getElementById('tab-buyer');
+
+      if (tab === 'seller') {
+        sellerPre.classList.remove('hidden');
+        buyerPre.classList.add('hidden');
+        tabSeller.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-teal-500 text-stone-950 font-semibold';
+        tabBuyer.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-stone-800 text-stone-300 hover:bg-stone-700';
+      } else {
+        buyerPre.classList.remove('hidden');
+        sellerPre.classList.add('hidden');
+        tabBuyer.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-teal-500 text-stone-950 font-semibold';
+        tabSeller.className = 'px-2.5 py-1 rounded-lg text-xs font-mono bg-stone-800 text-stone-300 hover:bg-stone-700';
+      }
+    }
+  </script>
+</body>
+</html>
