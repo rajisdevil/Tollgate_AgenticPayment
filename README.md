@@ -205,10 +205,6 @@ Install my-project with npm
 What did you learn while building this project? What challenges did you face and how did you overcome them?
 
 
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
 ## Related
 
 Here are some related projects
